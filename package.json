@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Presentation using MDX for Offheap Bloom Filters in Java",
   "scripts": {
-    "start": "mdx-deck deck.mdx"
+    "start": "mdx-deck deck.mdx",
+    "build": "mdx-deck build deck.mdx"
   },
   "author": "@dangoslen",
   "license": "ISC",
