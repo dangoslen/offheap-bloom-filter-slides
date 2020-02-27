@@ -11,5 +11,8 @@
   "devDependencies": {
     "mdx-deck": "^3.0.13",
     "mdx-observable": "^0.2.0"
+  },
+  "dependencies": {
+    "@theme-ui/components": "^0.3.1"
   }
 }

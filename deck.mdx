@@ -44,6 +44,7 @@ import Preso from './layouts/default.js'
 ---
 
 import { State, Observe } from 'mdx-observable'
+import { Input, Button } from '@theme-ui/components'
 
 <State
   initialState={{
@@ -72,8 +73,8 @@ import { State, Observe } from 'mdx-observable'
           updated[idx] = 1;
           setState(s => ({ ...s, bits: updated }));
         }} >
-            <input id="name" type="text" />
-            <button type="submit">Add Name</button>
+            <Input id="name" type="text" />
+            <Button type="submit">Add Name</Button>
         </form>
   ) }
 </Observe>
