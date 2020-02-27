@@ -1,8 +1,84 @@
-# Hello
+import BwTheme from './themes/theme.js'
+export const theme = BwTheme
+
+import Preso from './layouts/default.js'
+
+<Preso>
+
+# Bloom Filters and Offheap Java Memory
+### _By Dan Goslen_
+
+</Preso>
 
 ---
 
-## This is my deck
+<Preso>
+
+# What Are Bloom Filters?
+
+> _Probablistic data structure that can say if it either does **NOT** contain an element, or that it **MIGHT** contain it_
+
+</Preso>
+
+---
+
+<Preso>
+
+# Remember Hashing?
+* Given key _k_, calculate h(k)
+* Use resulting _h_ to find a value in a table of size _m_
+
+</Preso>
+
+---
+
+<Preso>
+
+# General Algorithm
+* Bit Array size _m_
+* Calculate _i_ _h_ values, using some form of a "salt" to create unique hashes
+* For each _h_i_ hash, find its position within _m_ bits and set it to 1
+
+</Preso>
+
+---
+
+import { State, Observe } from 'mdx-observable'
+
+<State
+  initialState={{
+    bits: [0, 0, 0, 0, 0, 0, 0],
+    size: 7,
+  }}>
+
+<Observe>
+  { ({ bits }) => ( bits.map(v => (<div>{ v }</div>)) ) }
+</Observe>
+
+<Observe>
+  { ({ bits, size, setState }) =>
+    (
+        <form onSubmit={ e => {
+          e.preventDefault();
+          var name = document.getElementById("name").value;
+          var hash = 0;
+          for (var i = 0; i < name.length; i++) {
+            var c = name.charCodeAt(i);
+            hash = ((hash << 5) - hash) + c;
+            hash = hash & hash;
+          }
+          var idx = hash % size;
+          var updated = bits;
+          updated[idx] = 1;
+          setState(s => ({ ...s, bits: updated }));
+        }} >
+            <input id="name" type="text" />
+            <button type="submit">Add Name</button>
+        </form>
+  ) }
+</Observe>
+
+</State>
 
 ---
 

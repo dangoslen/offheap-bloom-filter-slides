@@ -9,7 +9,7 @@
   "author": "@dangoslen",
   "license": "ISC",
   "devDependencies": {
-    "gatsby-source-filesystem": "^2.1.48",
-    "mdx-deck": "^4.1.0"
+    "mdx-deck": "^3.0.13",
+    "mdx-observable": "^0.2.0"
   }
 }
