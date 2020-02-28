@@ -7,7 +7,7 @@ export default {
   colors: {
     text: '#1c0a14',
     background: '#00bef0',
-    primary: '#ff673c',
+    primary: '#a95adf',
     secondary: '#a53f0c'
   },
   styles: {

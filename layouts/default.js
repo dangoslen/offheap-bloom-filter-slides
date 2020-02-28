@@ -6,7 +6,7 @@ const Preso = ({ children }) => {
     <div
         style={{
           width: '75vw',
-          height: '50vh',
+          height: '80vh',
         }}
     >
       <div>{children}</div>

@@ -44,16 +44,22 @@ import Preso from './layouts/default.js'
 ---
 
 import { State, Observe } from 'mdx-observable'
-import { Input, Button } from '@theme-ui/components'
+import { Box, Input, Button } from '@theme-ui/components'
 
 <State
   initialState={{
-    bits: [0, 0, 0, 0, 0, 0, 0],
-    size: 7,
+    bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    size: 10,
+    check: false,
+    clean: true,
   }}>
 
 <Observe>
-  { ({ bits }) => ( bits.map(v => (<div>{ v }</div>)) ) }
+  { ({ bits }) => (
+    <Box style={{ marginBottom: "30px" }}> {
+      bits.map(v => (<div style={{display: 'inline-block', marginRight: '10px' }}>{ v }</div>))}
+    </Box>
+  ) }
 </Observe>
 
 <Observe>
@@ -72,10 +78,41 @@ import { Input, Button } from '@theme-ui/components'
           var updated = bits;
           updated[idx] = 1;
           setState(s => ({ ...s, bits: updated }));
-        }} >
-            <Input id="name" type="text" />
-            <Button type="submit">Add Name</Button>
+        }} style={{ width: '100%'}} >
+            <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="name" type="text" />
+            <Button style={{ display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Add Name</Button>
         </form>
+  ) }
+</Observe>
+
+<Observe>
+  { ({ bits, size, setState }) =>
+    (
+        <form onSubmit={ e => {
+          e.preventDefault();
+          var name = document.getElementById("check").value;
+          var hash = 0;
+          for (var i = 0; i < name.length; i++) {
+            var c = name.charCodeAt(i);
+            hash = ((hash << 5) - hash) + c;
+            hash = hash & hash;
+          }
+          var idx = hash % size;
+          setState(s => ({ ...s, check: bits[idx] == 1, clean: false }));
+        }} style={{ width: '100%'}} >
+            <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="check" type="text" />
+            <Button variant='secondy' style={{ display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Check Name</Button>
+        </form>
+  ) }
+</Observe>
+
+<Observe>
+  { ({ clean, check, setState }) => (
+      <div onClick={ e => {
+        setState(s => ({ ...s, clean: true }));
+      }} style={{ width: '15px', height: '15px' }} >
+        { clean ? ' ' : check ? '🤷‍♂️' : '❌' }
+      </div>
   ) }
 </Observe>
 
