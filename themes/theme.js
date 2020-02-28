@@ -7,8 +7,8 @@ export default {
   colors: {
     text: '#1c0a14',
     background: '#00bef0',
-    primary: '#a95adf',
-    secondary: '#a53f0c'
+    primary: '#ff7e59',
+    secondary: '#266271'
   },
   styles: {
     pre: {

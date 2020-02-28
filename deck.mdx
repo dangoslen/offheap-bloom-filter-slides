@@ -2,6 +2,8 @@ import BwTheme from './themes/theme.js'
 export const theme = BwTheme
 
 import Preso from './layouts/default.js'
+import { Grid, Box, Input, Button } from '@theme-ui/components'
+
 
 <Preso>
 
@@ -36,15 +38,46 @@ import Preso from './layouts/default.js'
 
 # General Algorithm
 * Bit Array size _m_
-* Calculate _i_ _h_ values, using some form of a "salt" to create unique hashes
+* Calculate _i_ hashes, using some form of a "salt" to create unique hashes
 * For each _h_i_ hash, find its position within _m_ bits and set it to 1
 
 </Preso>
 
 ---
 
+<Preso>
+
+# Probablistic
+
+<Grid
+  gap={2}
+  columns={[2, '1fr 3fr']}>
+
+<Box/>
+
+<Box style={{ textAlign: 'center' }}>Predicted</Box>
+
+<Box style={{ textAlign: 'center', verticalAlign: 'middle', lineHeight: '160px' }}>Actual</Box>
+
+<Grid
+  gap={2}
+  columns={[2, '1fr 1fr']}>
+
+  <Box style={{ textAlign: 'center' }} bg='#4d8d7c'>True Negative</Box>
+  <Box style={{ textAlign: 'center' }} bg='#9d390a'>False Positive</Box>
+  <Box style={{ textAlign: 'center' }} bg='#4d2966'>False Negative</Box>
+  <Box style={{ textAlign: 'center' }} bg='#4d8d7c'>True Positive</Box>
+</Grid>
+
+</Grid>
+
+<Box style={{ marginTop: '80px', marginLeft: 'auto', marginRight: 'auto', width: '900px' }}>To reduce False Positives, combination of growing table and increasing <i>i</i></Box>
+
+</Preso>
+
+---
+
 import { State, Observe } from 'mdx-observable'
-import { Box, Input, Button } from '@theme-ui/components'
 
 <State
   initialState={{
@@ -82,9 +115,10 @@ import { Box, Input, Button } from '@theme-ui/components'
           console.log('Hash is ' + hash + ' and idx is ' + idx);
           updated[idx] = 1;
           setState(s => ({ ...s, bits: updated }));
+          document.getElementById("name").value = '';
         }} style={{ width: '100%'}} >
             <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="name" type="text" />
-            <Button style={{ display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Add Name</Button>
+            <Button bg='#4d8d7c' style={{ color: '#3e2f37', display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Add Name</Button>
         </form>
   ) }
 </Observe>
@@ -103,9 +137,10 @@ import { Box, Input, Button } from '@theme-ui/components'
           }
           var idx = hash % size;
           setState(s => ({ ...s, check: bits[idx] == 1, clean: false }));
+          document.getElementById("check").value = '';
         }} style={{ width: '100%'}} >
             <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="check" type="text" />
-            <Button variant='secondy' style={{ display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Check Name</Button>
+            <Button bg='#005c44' style={{ color: '#3e2f37', display: 'inline-block', width: '30%', marginLeft: '5%' }} type="submit">Check Name</Button>
         </form>
   ) }
 </Observe>
@@ -121,6 +156,62 @@ import { Box, Input, Button } from '@theme-ui/components'
 </Observe>
 
 </State>
+
+---
+
+<Preso>
+
+# What Are They Useful For?
+* Bloom Filters are useful for **protecting** a more expensive resource (like a database)
+* ie: you need to perform a lookup based on an ID, but there is a relativley small chance it even exists
+
+</Preso>
+
+---
+
+<Preso>
+
+# Use Case: Telephone Numbers
+* Blacklists (used for blocking calls) are literally just lists of numbers
+* These lists are **much** smaller than the total count of numbers that could go through Roger
+* Lists are still too large to stay in memory, and need to be persisted
+
+</Preso>
+
+---
+
+<Preso>
+
+# Bloom Filters are (Relativley) Small
+* Bloom Filters only need a small amount of memory relative to the size of the set that built it
+* ex: Blacklist of 3 million entries ~36 Mb; Bloom Filter is ~2.3 Mb for with 95% false positive
+
+</Preso>
+
+---
+
+<Preso>
+
+# Bloom Filters are Constrainable
+* You can have a _really_ small bloom filter if you want
+* Simply pay the cost in increased false positives
+
+</Preso>
+
+---
+
+import { FullScreenCode } from 'mdx-deck'
+import BloomFilter from './images/bloom_filter.png'
+
+<Preso>
+
+<div style={{ width: '80%', margin: 'auto' }}>
+  <img src={BloomFilter} />
+</div>
+
+</Preso>
+
+---
 
 ---
 
