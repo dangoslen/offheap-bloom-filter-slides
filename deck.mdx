@@ -75,7 +75,11 @@ import { Box, Input, Button } from '@theme-ui/components'
             hash = hash & hash;
           }
           var idx = hash % size;
+          if (idx < 0) {
+            idx = idx * -1;
+          }
           var updated = bits;
+          console.log('Hash is ' + hash + ' and idx is ' + idx);
           updated[idx] = 1;
           setState(s => ({ ...s, bits: updated }));
         }} style={{ width: '100%'}} >
