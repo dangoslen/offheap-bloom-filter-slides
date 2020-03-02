@@ -13,7 +13,7 @@ export default {
   },
   styles: {
     a: {
-      color: '#826994'
+      color: '#68497d'
     }
   },
 }
