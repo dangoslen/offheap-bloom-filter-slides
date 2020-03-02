@@ -12,9 +12,8 @@ export default {
     secondary: '#266271'
   },
   styles: {
-    pre: {
-      color: '#d8dbe2',
-      bg: 'text',
-    },
+    a: {
+      color: '#826994'
+    }
   },
 }

@@ -3,6 +3,7 @@ export const theme = BwTheme
 
 import Preso from './layouts/default.js'
 import { Grid, Box, Input, Button } from '@theme-ui/components'
+import { Split } from 'mdx-deck'
 
 
 <Preso>
@@ -28,8 +29,7 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 
 # What Do They Do?
 * **Protect** more expensive resources
-  * Like databases or files
-* ie - performing lookups against a relatively small data set
+* Databases, files, or other services
 
 </Preso>
 
@@ -39,8 +39,7 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 
 # How to Use?
 * Construct a filter for a set in the more expensive resource
-  * Will refer to this as the "target set"
-* Add each key from the target set to the filter
+* Insert each key from this target set into the filter
 * When performing a lookup, check filter before the target set
 
 </Preso>
@@ -50,8 +49,8 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 <Preso>
 
 # Remember Hashing?
-* Given key `k`, calculate `h(k)`
-* Use resulting `h` to find a value in a table of size `m`
+* Given key `k`, calculate `h` via `h(k)`
+* Use `h` to find a value in a table of size `m`
 * Looking up a key performs the same `h(k)` to check for the presence of the key
 
 </Preso>
@@ -75,7 +74,7 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 # Inserting a Key `k`
 * `m` size of bit array; `i` number of hashes
 * Calculate `i` hashes for `k`
-* For each hash value, find its position within the bit array and set it to 1
+* For each `h`, find its position within the bit array and set it to 1
 
 </Preso>
 
@@ -84,10 +83,10 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 <Preso>
 
 # Might Contain a Key `k`
-* Calculate the **same** `i` hash values
-* Check each position in the bit array for each hash values
-* Logical `&` of each bit position
-* If `true`, the `k` **might** exist in the set
+* Calculate the **same** hash values
+* For each `h`, find the bit position
+* Logical `&` of the bits at each position
+* If `true`, then `k` **might** exist in the set
 
 </Preso>
 
@@ -96,33 +95,9 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 <Preso>
 
 # Probablistic
-* Overtime and with many keys, bit array will have many bits set to `1`
-* Many bit positions were set from different keys
-* Will get false positives for candidate keys
-
-<Grid
-  gap={2}
-  columns={[2, '1fr 3fr']}>
-
-<Box/>
-
-<Box style={{ textAlign: 'center' }}>Predicted</Box>
-
-<Box style={{ textAlign: 'center', verticalAlign: 'middle', lineHeight: '160px' }}>Actual</Box>
-
-<Grid
-  gap={2}
-  columns={[2, '1fr 1fr']}>
-
-  <Box style={{ textAlign: 'center' }} bg='#4d8d7c'>True Negative</Box>
-  <Box style={{ textAlign: 'center' }} bg='#9d390a'>False Positive</Box>
-  <Box style={{ textAlign: 'center' }} bg='#4d2966'>False Negative</Box>
-  <Box style={{ textAlign: 'center' }} bg='#4d8d7c'>True Positive</Box>
-</Grid>
-
-</Grid>
-
-<Box style={{ marginTop: '80px', marginLeft: 'auto', marginRight: 'auto', width: '900px' }}>To reduce False Positives, combination of growing table and increasing <i>i</i></Box>
+* As keys are inserted, bit array becomes full (many bits set to 1)
+* False positives will start to occur
+* To reduce false positives, combination of growing table and increasing i
 
 </Preso>
 
@@ -184,7 +159,7 @@ import { State, Observe } from 'mdx-observable'
             idx = idx * -1;
           }
           updated[idx] = 1;
-          setState(s => ({ ...s, bits: updated }));
+          setState(s => ({ ...s, bits: updated, clean: true }));
           document.getElementById("name").value = '';
         }} style={{ width: '100%'}} >
             <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="name" type="text" />
@@ -247,10 +222,12 @@ import { State, Observe } from 'mdx-observable'
 
 <Preso>
 
-# Use Case: Telephone Numbers
-* Blacklists (used for blocking calls) are literally just lists of numbers
-* These lists are **much** smaller than the total count of numbers that could go through Roger
-* Lists are still too large to stay in memory, and need to be persisted
+# Use Case: List of TNs
+* Blacklists of telephone numbers (used for blocking calls)
+* These lists are **much** smaller than all possible telephone numbers
+* Lists are too large to stay in memory, and need to be persisted
+* Checking a persistent data store for every call is expensive
+* Espeically true when we know most numbers will not be in a blacklist
 
 </Preso>
 
@@ -258,9 +235,20 @@ import { State, Observe } from 'mdx-observable'
 
 <Preso>
 
-# Bloom Filters are (Relativley) Small
-* Bloom Filters only need a small amount of memory relative to the size of the set that built it
-* ex: Blacklist of 3 million entries ~36 Mb; Bloom Filter is ~2.3 Mb for with 95% false positive
+# Theoretical Performance?
+* Insert and lookup is `O(i)`
+* Stays constant as number of keys grow
+* Choose faster hashes and over hashes with fewer collisions
+
+</Preso>
+
+---
+
+<Preso>
+
+# Bloom Filters are Small
+* Only need a small amount of memory relative to the size of the set that built it
+* ex: Blacklist of 3 million entries ~36 MB; Bloom Filter is ~2.3 MB for with 95% false positive
 
 </Preso>
 
@@ -271,6 +259,7 @@ import { State, Observe } from 'mdx-observable'
 # Bloom Filters are Constrainable
 * You can have a _really_ small bloom filter if you want
 * Simply pay the cost in increased false positives
+* Do not grow linearly with respect to expected number of keys
 
 </Preso>
 
@@ -289,6 +278,80 @@ import BloomFilter from './images/bloom_filter.png'
 
 ---
 
+<Preso>
+
+# Downside?
+* Can't delete!
+* Setting a bit back to 0 from 1 affects multiple keys
+* Must rebuild the filter
+
+</Preso>
+
 ---
 
-## The End
+<Preso>
+
+<Box style={{ textAlign: 'center' }}>
+
+# So... What About this Offheap Part?
+
+</Box>
+
+</Preso>
+
+---
+
+<Preso>
+
+# Bloom Filters Must Stay in Memory to be Used Correctly
+* Affects Garbage Collections
+* Systems like Roger can't afford a major GC
+  * At least in its current form
+
+</Preso>
+
+---
+
+<Preso>
+
+# Offheap Memory Doesn't Get GC'ed
+* Manual memory management
+* But can be tricky with complex objects
+
+</Preso>
+
+---
+
+<Preso>
+
+# Bloom Fiters are Easy in Offheap Memory
+* Bit array as a byte array using bit masks is reasonably easy
+* Calculate expected size and ask for it
+* Slower than the heap, but still faster than checking a data store
+
+</Preso>
+
+---
+
+<Preso>
+
+# Other Things to Track
+* Hashing functions are still on-heap - could potentially use static functions
+* Hash count also needs to be stored - could just but an _int_ at the beggining of the filter
+
+</Preso>
+
+---
+
+<Preso>
+
+# References
+* More Reading: [Bloom Filter (wikipedia)](https://en.wikipedia.org/wiki/Bloom_filter)
+* More Reading: [Jason Davies Blog](https://www.jasondavies.com/bloomfilter/)
+* Code: [Low Pass](https://github.com/Bandwidth/low-pass)
+
+</Preso>
+
+---
+
+# Thanks! 👋
