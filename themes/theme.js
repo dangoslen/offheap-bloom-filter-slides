@@ -1,3 +1,4 @@
+
 export default {
   googleFont: 'https://fonts.googleapis.com/css?family=Overpass',
   fonts: {
@@ -12,7 +13,7 @@ export default {
   },
   styles: {
     pre: {
-      color: 'background',
+      color: '#d8dbe2',
       bg: 'text',
     },
   },

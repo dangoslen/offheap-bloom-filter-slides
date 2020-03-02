@@ -18,7 +18,30 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 
 # What Are Bloom Filters?
 
-> _Probablistic data structure that can say if it either does **NOT** contain an element, or that it **MIGHT** contain it_
+> _In-memory probablistic data structure that can say if a key either does **NOT** exist in a set, or that it **MIGHT** exist in the set_
+
+</Preso>
+
+---
+
+<Preso>
+
+# What Do They Do?
+* **Protect** more expensive resources
+  * Like databases or files
+* ie - performing lookups against a relatively small data set
+
+</Preso>
+
+---
+
+<Preso>
+
+# How to Use?
+* Construct a filter for a set in the more expensive resource
+  * Will refer to this as the "target set"
+* Add each key from the target set to the filter
+* When performing a lookup, check filter before the target set
 
 </Preso>
 
@@ -27,8 +50,21 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 <Preso>
 
 # Remember Hashing?
-* Given key _k_, calculate h(k)
-* Use resulting _h_ to find a value in a table of size _m_
+* Given key `k`, calculate `h(k)`
+* Use resulting `h` to find a value in a table of size `m`
+* Looking up a key performs the same `h(k)` to check for the presence of the key
+
+</Preso>
+
+---
+
+
+<Preso>
+
+# Bloom Filters Use Multiple Hahses
+* Table is a bit array
+* Calculate different hash values fot each key `k`
+* Mark each bit in the array at the hash value to `1`
 
 </Preso>
 
@@ -36,10 +72,22 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 
 <Preso>
 
-# General Algorithm
-* Bit Array size _m_
-* Calculate _i_ hashes, using some form of a "salt" to create unique hashes
-* For each _h_i_ hash, find its position within _m_ bits and set it to 1
+# Inserting a Key `k`
+* `m` size of bit array; `i` number of hashes
+* Calculate `i` hashes for `k`
+* For each hash value, find its position within the bit array and set it to 1
+
+</Preso>
+
+---
+
+<Preso>
+
+# Might Contain a Key `k`
+* Calculate the **same** `i` hash values
+* Check each position in the bit array for each hash values
+* Logical `&` of each bit position
+* If `true`, the `k` **might** exist in the set
 
 </Preso>
 
@@ -48,6 +96,9 @@ import { Grid, Box, Input, Button } from '@theme-ui/components'
 <Preso>
 
 # Probablistic
+* Overtime and with many keys, bit array will have many bits set to `1`
+* Many bit positions were set from different keys
+* Will get false positives for candidate keys
 
 <Grid
   gap={2}
@@ -81,16 +132,25 @@ import { State, Observe } from 'mdx-observable'
 
 <State
   initialState={{
-    bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    size: 10,
+    bits: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    size: 13,
+    checked: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     check: false,
     clean: true,
   }}>
 
 <Observe>
+  { ({ checked, clean }) => (
+    <Box style={{ marginBottom: "30px" }}> {
+      checked.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '20px', width: '35px' }}>{ (v == 1 && !clean) ? '⬇️' : ' ' }</div>))}
+    </Box>
+  ) }
+</Observe>
+
+<Observe>
   { ({ bits }) => (
     <Box style={{ marginBottom: "30px" }}> {
-      bits.map(v => (<div style={{display: 'inline-block', marginRight: '10px' }}>{ v }</div>))}
+      bits.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '20px', width: '35px' }}>{ v }</div>))}
     </Box>
   ) }
 </Observe>
@@ -112,7 +172,17 @@ import { State, Observe } from 'mdx-observable'
             idx = idx * -1;
           }
           var updated = bits;
-          console.log('Hash is ' + hash + ' and idx is ' + idx);
+          updated[idx] = 1;
+          hash = 0;
+          for (var i = 0; i < name.length; i++) {
+            var c = name.charCodeAt(i);
+            hash = ((hash << 4) - hash) + c;
+            hash = hash & hash;
+          }
+          idx = hash % size;
+          if (idx < 0) {
+            idx = idx * -1;
+          }
           updated[idx] = 1;
           setState(s => ({ ...s, bits: updated }));
           document.getElementById("name").value = '';
@@ -124,7 +194,7 @@ import { State, Observe } from 'mdx-observable'
 </Observe>
 
 <Observe>
-  { ({ bits, size, setState }) =>
+  { ({ bits, checked, size, setState }) =>
     (
         <form onSubmit={ e => {
           e.preventDefault();
@@ -136,7 +206,23 @@ import { State, Observe } from 'mdx-observable'
             hash = hash & hash;
           }
           var idx = hash % size;
-          setState(s => ({ ...s, check: bits[idx] == 1, clean: false }));
+          if (idx < 0) {
+            idx = idx * -1;
+          }
+          var updated = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+          updated[idx] = 1;
+          hash = 0;
+          for (var i = 0; i < name.length; i++) {
+            var c = name.charCodeAt(i);
+            hash = ((hash << 4) - hash) + c;
+            hash = hash & hash;
+          }
+          idx = hash % size;
+          if (idx < 0) {
+            idx = idx * -1;
+          }
+          updated[idx] = 1;
+          setState(s => ({ ...s, check: bits[idx] == 1, clean: false, checked: updated }));
           document.getElementById("check").value = '';
         }} style={{ width: '100%'}} >
             <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="check" type="text" />
@@ -146,7 +232,7 @@ import { State, Observe } from 'mdx-observable'
 </Observe>
 
 <Observe>
-  { ({ clean, check, setState }) => (
+  { ({ clean, size, check, setState }) => (
       <div onClick={ e => {
         setState(s => ({ ...s, clean: true }));
       }} style={{ width: '15px', height: '15px' }} >
@@ -156,16 +242,6 @@ import { State, Observe } from 'mdx-observable'
 </Observe>
 
 </State>
-
----
-
-<Preso>
-
-# What Are They Useful For?
-* Bloom Filters are useful for **protecting** a more expensive resource (like a database)
-* ie: you need to perform a lookup based on an ID, but there is a relativley small chance it even exists
-
-</Preso>
 
 ---
 
