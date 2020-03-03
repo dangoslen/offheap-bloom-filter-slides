@@ -1,9 +1,10 @@
 
 export default {
-  googleFont: 'https://fonts.googleapis.com/css?family=Overpass',
+  overpass: 'https://fonts.googleapis.com/css?family=Overpass',
+  sourceCodePro: 'https://fonts.googleapis.com/css?family=Source+Code+Pro',
   fonts: {
     body: '"Overpass"',
-    monospace: '"Overpass", Light Italic',
+    monospace: '"Source+Code+Pro"',
   },
   colors: {
     text: '#1c0a14',
@@ -14,6 +15,11 @@ export default {
   styles: {
     a: {
       color: '#68497d'
-    }
+    },
+    li: {
+      code: {
+        fontStyle: 'italic'
+      }
+    },
   },
 }

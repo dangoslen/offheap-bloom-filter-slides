@@ -5,6 +5,8 @@ import Preso from './layouts/default.js'
 import { Grid, Box, Input, Button } from '@theme-ui/components'
 import { Split } from 'mdx-deck'
 
+import Coffee from './images/coffee.png'
+
 
 <Preso>
 
@@ -12,6 +14,11 @@ import { Split } from 'mdx-deck'
 ### _By Dan Goslen_
 
 </Preso>
+
+<div style={{ width: '30%', position: 'absolute', bottom: '0px', right: '0px' }}>
+  <img src={ Coffee } />
+</div>
+
 
 ---
 
@@ -117,7 +124,7 @@ import { State, Observe } from 'mdx-observable'
 <Observe>
   { ({ checked, clean }) => (
     <Box style={{ marginBottom: "30px" }}> {
-      checked.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '20px', width: '35px' }}>{ (v == 1 && !clean) ? '⬇️' : ' ' }</div>))}
+      checked.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '80px', width: '50px' }}>{ (v == 1 && !clean) ? '⬇️' : ' ' }</div>))}
     </Box>
   ) }
 </Observe>
@@ -125,7 +132,7 @@ import { State, Observe } from 'mdx-observable'
 <Observe>
   { ({ bits }) => (
     <Box style={{ marginBottom: "30px" }}> {
-      bits.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '20px', width: '35px' }}>{ v }</div>))}
+      bits.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '80px', width: '50px' }}>{ v }</div>))}
     </Box>
   ) }
 </Observe>
