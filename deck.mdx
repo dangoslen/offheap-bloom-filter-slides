@@ -19,7 +19,6 @@ import Coffee from './images/coffee.png'
   <img src={ Coffee } />
 </div>
 
-
 ---
 
 <Preso>
@@ -104,7 +103,7 @@ import Coffee from './images/coffee.png'
 # Probablistic
 * As keys are inserted, bit array becomes full (many bits set to 1)
 * False positives will start to occur
-* To reduce false positives, combination of growing table and increasing i
+* To reduce false positives, combination of growing table and increasing `i`
 
 </Preso>
 
@@ -124,7 +123,7 @@ import { State, Observe } from 'mdx-observable'
 <Observe>
   { ({ checked, clean }) => (
     <Box style={{ marginBottom: "30px" }}> {
-      checked.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', height: '80px', width: '50px' }}>{ (v == 1 && !clean) ? '⬇️' : ' ' }</div>))}
+      checked.map(v => (<div style={{ display: 'inline-block', textAlign: 'center', marginRight: '10px', width: '50px' }}>{ (v == 1 && !clean) ? '⬇️' : ' ' }</div>))}
     </Box>
   ) }
 </Observe>
@@ -230,13 +229,48 @@ import { State, Observe } from 'mdx-observable'
 <Preso>
 
 # Use Case: List of TNs
-* Blacklists of telephone numbers (used for blocking calls)
-* These lists are **much** smaller than all possible telephone numbers
-* Lists are too large to stay in memory, and need to be persisted
-* Checking a persistent data store for every call is expensive
-* Espeically true when we know most numbers will not be in a blacklist
+* Blacklists of TNs to block calls against
+* **Much** smaller than all possible telephone numbers
 
 </Preso>
+
+---
+
+<Preso>
+
+# Use Case (cntd)
+* Blacklists themselves are large to store in memory
+* Need to be persisted regardless
+* Expensive to check blacklist on every call made
+
+</Preso>
+
+---
+
+<Preso>
+
+# Use Case (cntd)
+* Using a Bloom Filter allows to a check before hitting the data store
+* Must keep list's filter in-sync with actual list
+
+</Preso>
+
+---
+
+import { FullScreenCode } from 'mdx-deck'
+import BloomFilter from './images/bloom_filter.png'
+
+<Preso>
+
+<div style={{ width: '80%', margin: 'auto' }}>
+  <img src={BloomFilter} />
+</div>
+
+</Preso>
+
+---
+
+# Other Bloom Filter Properties
 
 ---
 
@@ -253,9 +287,9 @@ import { State, Observe } from 'mdx-observable'
 
 <Preso>
 
-# Bloom Filters are Small
+# How Big are They?
 * Only need a small amount of memory relative to the size of the set that built it
-* ex: Blacklist of 3 million entries ~36 MB; Bloom Filter is ~2.3 MB for with 95% false positive
+* Blacklist of 3 million entries ~177 MB; Bloom Filter is ~2.3 MB for with 95% false positive
 
 </Preso>
 
@@ -270,18 +304,6 @@ import { State, Observe } from 'mdx-observable'
 
 </Preso>
 
----
-
-import { FullScreenCode } from 'mdx-deck'
-import BloomFilter from './images/bloom_filter.png'
-
-<Preso>
-
-<div style={{ width: '80%', margin: 'auto' }}>
-  <img src={BloomFilter} />
-</div>
-
-</Preso>
 
 ---
 
@@ -302,7 +324,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 <Preso>
 
-# Bloom Filters Must Stay in Memory to be Used Correctly
+# Must Stay In Memory
 * Affects Garbage Collections
 * Systems like Roger can't afford a major GC
   * At least in its current form
@@ -336,7 +358,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 # Other Things to Track
 * Hashing functions are still on-heap - could potentially use static functions
-* Hash count also needs to be stored - could just but an _int_ at the beggining of the filter
+* Hash count also needs to be stored - could just but stored at the beggining of the filter array
 
 </Preso>
 
