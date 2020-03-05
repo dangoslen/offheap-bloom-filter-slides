@@ -10,7 +10,7 @@ import Coffee from './images/coffee.png'
 
 <Preso>
 
-# Bloom Filters and Offheap Java Memory
+# Bloom Filters and Offheap Memory
 ### _By Dan Goslen_
 
 </Preso>
@@ -23,7 +23,7 @@ import Coffee from './images/coffee.png'
 
 <Preso>
 
-# What Are Bloom Filters?
+# What is a Bloom Filter?
 
 > _In-memory probablistic data structure that can say if a key either does **NOT** exist in a set, or that it **MIGHT** exist in the set_
 
@@ -34,8 +34,9 @@ import Coffee from './images/coffee.png'
 <Preso>
 
 # What Do They Do?
-* **Protect** more expensive resources
-* Databases, files, or other services
+* **Protect** more expensive resources from looking for keys that aren't there
+  * Databases, files, or other services
+* They can say definitively that a key does not exist in a set
 
 </Preso>
 
@@ -43,12 +44,16 @@ import Coffee from './images/coffee.png'
 
 <Preso>
 
-# How to Use?
-* Construct a filter for a set in the more expensive resource
-* Insert each key from this target set into the filter
-* When performing a lookup, check filter before the target set
+# How to Use Them?
+* Think of a Bloom Filter as a memory efficient "copy" of a set in the more expensive resource
+* Read your target set from the resource, inserting each key into a filter
+* When looking up a key from the target set, check the filter first
 
 </Preso>
+
+---
+
+# How Do They Work?
 
 ---
 
@@ -56,20 +61,19 @@ import Coffee from './images/coffee.png'
 
 # Remember Hashing?
 * Given key `k`, calculate `h` via `h(k)`
-* Use `h` to find a value in a table of size `m`
-* Looking up a key performs the same `h(k)` to check for the presence of the key
+* Use `h` to find an index value in a table of size `m` and store it at that index
+* Lookups perform the same operations to check for the presence of a key in the table
 
 </Preso>
 
 ---
 
-
 <Preso>
 
-# Bloom Filters Use Multiple Hashes
-* Table is a bit array
-* Calculate different hash values fot each key `k`
-* Mark each bit in the array at the hash value to `1`
+# Bloom Filters Use Hashing With a Bit Array
+* A opposed to an array of the key's type
+* You simply mark bits as 0 or 1 for each found index value for a key `k`
+* Instead of one hash, perform multiple hashes
 
 </Preso>
 
@@ -78,9 +82,10 @@ import Coffee from './images/coffee.png'
 <Preso>
 
 # Inserting a Key `k`
-* `m` size of bit array; `i` number of hashes
+* `i` = number of hashes
 * Calculate `i` hashes for `k`
-* For each `h`, find its position within the bit array and set it to 1
+* For each `h`, find its index value within the bit array and set it to 1
+* Each hash should be a unique value!
 
 </Preso>
 
@@ -88,11 +93,11 @@ import Coffee from './images/coffee.png'
 
 <Preso>
 
-# Might Contain a Key `k`
-* Calculate the **same** hash values
-* For each `h`, find the bit position
-* Logical `&` of the bits at each position
+# Contains Key `k`?
+* Calculate the same `i` hash values and index values
+* `&` of each bit  in the array at those index values
 * If `true`, then `k` **might** exist in the set
+* If `false`, the `k` is **not** in the set
 
 </Preso>
 
@@ -103,9 +108,13 @@ import Coffee from './images/coffee.png'
 # Probablistic
 * As keys are inserted, bit array becomes full (many bits set to 1)
 * False positives will start to occur
-* To reduce false positives, combination of growing table and increasing `i`
+* Can increase table size `m` table and/or increase hash count `i`
 
 </Preso>
+
+---
+
+# Example
 
 ---
 
@@ -192,6 +201,7 @@ import { State, Observe } from 'mdx-observable'
           }
           var updated = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
           updated[idx] = 1;
+          var check = bits[idx] == 1;
           hash = 0;
           for (var i = 0; i < name.length; i++) {
             var c = name.charCodeAt(i);
@@ -203,7 +213,8 @@ import { State, Observe } from 'mdx-observable'
             idx = idx * -1;
           }
           updated[idx] = 1;
-          setState(s => ({ ...s, check: bits[idx] == 1, clean: false, checked: updated }));
+          check = check && bits[idx] == 1;
+          setState(s => ({ ...s, check: check, clean: false, checked: updated }));
           document.getElementById("check").value = '';
         }} style={{ width: '100%'}} >
             <Input style={{ display: 'inline-block', width: '30%', marginLeft: '15%', marginRight: '5%' }} id="check" type="text" />
@@ -228,8 +239,9 @@ import { State, Observe } from 'mdx-observable'
 
 <Preso>
 
-# Use Case: List of TNs
-* Blacklists of TNs to block calls against
+# Use Case: Blacklists
+* Blacklists are lists of TNs to block calls against
+  * Current limit is 3 million TNs per list
 * **Much** smaller than all possible telephone numbers
 
 </Preso>
@@ -239,9 +251,9 @@ import { State, Observe } from 'mdx-observable'
 <Preso>
 
 # Use Case (cntd)
-* Blacklists themselves are large to store in memory
+* Blacklists themselves are relatively large to store in memory
 * Need to be persisted regardless
-* Expensive to check blacklist on every call made
+* Expensive to check blacklist on every number on every call
 
 </Preso>
 
@@ -250,7 +262,7 @@ import { State, Observe } from 'mdx-observable'
 <Preso>
 
 # Use Case (cntd)
-* Using a Bloom Filter allows to a check before hitting the data store
+* Using a Bloom Filter allows a simple in-memory check before hitting the data store
 * Must keep list's filter in-sync with actual list
 
 </Preso>
@@ -262,7 +274,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 <Preso>
 
-<div style={{ width: '80%', margin: 'auto' }}>
+<div style={{ width: '86%', margin: 'auto' }}>
   <img src={BloomFilter} />
 </div>
 
@@ -270,7 +282,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 ---
 
-# Other Bloom Filter Properties
+# Other Properties
 
 ---
 
@@ -289,7 +301,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 # How Big are They?
 * Only need a small amount of memory relative to the size of the set that built it
-* Blacklist of 3 million entries ~177 MB; Bloom Filter is ~2.3 MB for with 95% false positive
+* Blacklist of 3 million entries ~177 MB; Bloom Filter is ~2.3 MB for with 5% false positive rate
 
 </Preso>
 
@@ -300,32 +312,42 @@ import BloomFilter from './images/bloom_filter.png'
 # Bloom Filters are Constrainable
 * You can have a _really_ small bloom filter if you want
 * Simply pay the cost in increased false positives
-* Do not grow linearly with respect to expected number of keys
+* Needed table size does grow, but grows slower than the expected number of keys
 
 </Preso>
-
 
 ---
 
 <Preso>
 
 # Downside?
-* Can't delete!
-* Setting a bit back to 0 from 1 affects multiple keys
+* Can't delete keys!
 * Must rebuild the filter
+* Works well if you create or change full sets of data rather than individual keys
 
 </Preso>
 
 ---
 
-# So... What About this Offheap Part?
+# What About This Offheap Part?
 
 ---
 
 <Preso>
 
-# Must Stay In Memory
-* Affects Garbage Collections
+# Filters Must Stay In Memory
+* Reading a filter from a data store for every check defeats the purpose
+* Will likely stary around for a long time...
+* Until the target set changes
+
+</Preso>
+
+---
+
+<Preso>
+
+# Filters Must Stay In Memory
+* As a result, garbage collection is affected
 * Systems like Roger can't afford a major GC
   * At least in its current form
 
@@ -348,17 +370,7 @@ import BloomFilter from './images/bloom_filter.png'
 # Bloom Fiters are Easy in Offheap Memory
 * Bit array as a byte array using bit masks is reasonably easy
 * Calculate expected size and ask for it
-* Slower than the heap, but still faster than checking a data store
-
-</Preso>
-
----
-
-<Preso>
-
-# Other Things to Track
-* Hashing functions are still on-heap - could potentially use static functions
-* Hash count also needs to be stored - could just but stored at the beggining of the filter array
+* Store the hash count at the beggining of the filter
 
 </Preso>
 
