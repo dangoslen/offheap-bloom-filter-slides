@@ -25,7 +25,7 @@ import Coffee from './images/coffee.png'
 
 # What is a Bloom Filter?
 
-> _In-memory probablistic data structure that can say if a key either does **NOT** exist in a set, or that it **MIGHT** exist in the set_
+> _Memory efficient probablistic data structure that can say if a key either does **NOT** exist in a set, or that it **MIGHT** exist in the set_
 
 </Preso>
 
@@ -72,7 +72,7 @@ import Coffee from './images/coffee.png'
 
 # Bloom Filters Use Hashing With a Bit Array
 * A opposed to an array of the key's type
-* You simply mark bits as 0 or 1 for each found index value for a key `k`
+* You simply mark bits as 1 for each found index value for a key `k`
 * Instead of one hash, perform multiple hashes
 
 </Preso>
@@ -84,8 +84,8 @@ import Coffee from './images/coffee.png'
 # Inserting a Key `k`
 * `i` = number of hashes
 * Calculate `i` hashes for `k`
-* For each `h`, find its index value within the bit array and set it to 1
-* Each hash should be a unique value!
+* For each hash `h`, find its index value within the bit array and set it to 1
+* **Each hash should be a unique value!**
 
 </Preso>
 
@@ -108,7 +108,7 @@ import Coffee from './images/coffee.png'
 # Probablistic
 * As keys are inserted, bit array becomes full (many bits set to 1)
 * False positives will start to occur
-* Can increase table size `m` table and/or increase hash count `i`
+* Can increase table size `m` table and/or increase hash count `i` to decrease false positive rate
 
 </Preso>
 
@@ -262,7 +262,7 @@ import { State, Observe } from 'mdx-observable'
 <Preso>
 
 # Use Case (cntd)
-* Using a Bloom Filter allows a simple in-memory check before hitting the data store
+* Using a Bloom Filter allows a simple in memory check before hitting the data store
 * Must keep list's filter in-sync with actual list
 
 </Preso>
@@ -324,7 +324,7 @@ import BloomFilter from './images/bloom_filter.png'
 
 # Downside?
 * Can't delete keys!
-* Must rebuild the filter
+* Must rebuild the filter instead
 * Works well if you create or change full sets of data rather than individual keys
 
 </Preso>
@@ -338,7 +338,7 @@ import BloomFilter from './images/bloom_filter.png'
 <Preso>
 
 # Filters Must Stay In Memory
-* Reading a filter from a data store for every check defeats the purpose
+* Reading a filter from an expensive data store for every check defeats the purpose of the filter
 * Will likely stary around for a long time...
 * Until the target set changes
 
